@@ -229,11 +229,13 @@ function BookPage() {
       </header>
 
       <main className="max-w-7xl mx-auto p-6 grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] items-start">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2"><CalendarDays className="h-4 w-4" /> Pick a date</CardTitle>
+        <Card className="overflow-hidden">
+          <CardHeader className="border-b bg-muted/30">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <CalendarDays className="h-5 w-5 text-primary" /> Pick a date
+            </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 sm:p-6">
             <Calendar
               mode="single"
               selected={date}
@@ -242,8 +244,20 @@ function BookPage() {
               startMonth={monthStart}
               endMonth={monthEnd}
               defaultMonth={today0}
-              className="pointer-events-auto"
+              className="pointer-events-auto w-full [--cell-size:clamp(2.5rem,7vw,3.75rem)]"
+              classNames={{
+                root: "w-full",
+                months: "w-full",
+                month: "w-full space-y-4",
+                month_caption: "flex h-12 items-center justify-center text-base font-semibold",
+                caption_label: "text-base font-semibold",
+                weekday: "text-muted-foreground flex-1 select-none text-xs font-medium uppercase tracking-wide py-2",
+                week: "mt-1 flex w-full",
+                day: "group/day relative aspect-square h-full w-full select-none p-0.5 text-center text-sm",
+                today: "bg-accent/60 text-accent-foreground rounded-md font-semibold ring-1 ring-primary/30",
+              }}
             />
+
             <div className="mt-3 rounded-md border bg-muted/50 p-3 text-xs space-y-1">
               <div>
                 <span className="font-medium">This month only:</span>{" "}
