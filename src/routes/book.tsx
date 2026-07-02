@@ -228,7 +228,7 @@ function BookPage() {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto p-6 grid gap-6 md:grid-cols-[auto_1fr]">
+      <main className="max-w-7xl mx-auto p-6 grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] items-start">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2"><CalendarDays className="h-4 w-4" /> Pick a date</CardTitle>
