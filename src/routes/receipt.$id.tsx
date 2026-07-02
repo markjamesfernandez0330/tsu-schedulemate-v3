@@ -1,10 +1,11 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
-import { Printer, ArrowLeft, CheckCircle2, Clock, AlertCircle, XCircle } from "lucide-react";
+import { Printer, ArrowLeft, CheckCircle2, Clock, AlertCircle, XCircle, ShieldAlert } from "lucide-react";
 import { Loader } from "@/components/loader";
+import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/receipt/$id")({
   head: () => ({ meta: [{ title: "Booking receipt" }] }),
@@ -13,19 +14,43 @@ export const Route = createFileRoute("/receipt/$id")({
 
 function ReceiptPage() {
   const { id } = Route.useParams();
+  const navigate = useNavigate();
+  const { user, role, loading: authLoading } = useAuth();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (authLoading) return;
+    if (!user) {
+      navigate({ to: "/login" });
+      return;
+    }
     const unsub = onSnapshot(doc(db, "bookings", id), (snap) => {
       if (snap.exists()) setData({ id: snap.id, ...snap.data() });
       setLoading(false);
     });
     return () => unsub();
-  }, [id]);
+  }, [id, user, authLoading, navigate]);
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center"><Loader label="Loading receipt…" /></div>;
+  if (authLoading || loading) return <div className="min-h-screen flex items-center justify-center"><Loader label="Loading receipt…" /></div>;
   if (!data) return <div className="min-h-screen flex items-center justify-center">Receipt not found.</div>;
+
+  const isOwner = !!user && (data.userId === user.uid || (data.userEmail && user.email && String(data.userEmail).toLowerCase() === user.email.toLowerCase()));
+  const isAdmin = role === "admin";
+  if (!isOwner && !isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-muted/30 px-4">
+        <div className="max-w-md w-full bg-white rounded-xl border shadow-sm p-8 text-center">
+          <ShieldAlert className="h-12 w-12 text-red-600 mx-auto mb-3" />
+          <h1 className="text-xl font-semibold mb-2">Not authorized</h1>
+          <p className="text-sm text-muted-foreground mb-6">
+            This receipt is private. Only the student who created this booking or an admin can view it.
+          </p>
+          <Button asChild size="sm"><Link to="/">Go home</Link></Button>
+        </div>
+      </div>
+    );
+  }
 
   const createdAt = data.createdAt?.toDate?.() ?? new Date();
   const status: string = data.status || "pending";
@@ -50,7 +75,7 @@ function ReceiptPage() {
         </div>
 
         <div className="bg-white rounded-xl shadow-sm border p-8 print:shadow-none print:border-none">
-          <div className="text-center border-b pb-4 mb-4">
+       <div className="text-center border-b pb-4 mb-4">
             {data.photoUrl ? (
               // <img src={data.photoUrl} alt="" className="mx-auto h-16 w-16 rounded-full object-cover border" />
                  <img src="/tsu-logo.png" alt="TSU" className="mx-auto h-16 w-16 rounded-full object-cover border" />

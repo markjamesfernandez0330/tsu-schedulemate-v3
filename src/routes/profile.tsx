@@ -164,7 +164,7 @@ function ProfilePage() {
             <Input
               value={middleName}
               onChange={(e) => setMiddleName(e.target.value)}
-              placeholder="Fernandez"
+              placeholder="...."
               disabled={noMiddleName}
             />
           </div>
