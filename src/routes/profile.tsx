@@ -17,8 +17,9 @@ export const Route = createFileRoute("/profile")({
 function ProfilePage() {
   const { user, loading } = useAuth();
   const router = useRouter();
-  const [fullName, setFullName] = useState("");
+  const [firstName, setFirstName] = useState("");
   const [middleName, setMiddleName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [noMiddleName, setNoMiddleName] = useState(false);
   const [idNumber, setIdNumber] = useState("");
   const [saving, setSaving] = useState(false);
@@ -45,17 +46,25 @@ function ProfilePage() {
     (async () => {
       const snap = await getDoc(doc(db, "users", user.uid));
       const d = snap.data() as any;
-      if (d?.fullName) {
-        setFullName(d.fullName || "");
-      } else if (d?.firstName || d?.lastName) {
-        // Reconstruct from old split fields
-        const parts = [d.firstName, d.middleName, d.lastName].filter(Boolean);
-        setFullName(parts.join(" "));
+      if (d?.firstName || d?.lastName) {
+        setFirstName(d.firstName || "");
+        setMiddleName(d.middleName || "");
+        setLastName(d.lastName || "");
+        setNoMiddleName(!!d.noMiddleName);
       } else {
-        setFullName(user.displayName || "");
+        // Fallback: split legacy fullName / displayName
+        const parts = ((d?.fullName as string) || user.displayName || "").trim().split(/\s+/);
+        if (parts.length === 1) {
+          setFirstName(parts[0] ?? "");
+        } else if (parts.length === 2) {
+          setFirstName(parts[0]);
+          setLastName(parts[1]);
+        } else if (parts.length >= 3) {
+          setFirstName(parts[0]);
+          setLastName(parts[parts.length - 1]);
+          setMiddleName(parts.slice(1, -1).join(" "));
+        }
       }
-      setMiddleName(d?.middleName || "");
-      setNoMiddleName(!!d?.noMiddleName);
       setIdNumber(d?.studentNumber || d?.idNumber || "");
       setHydrating(false);
     })();
@@ -73,11 +82,13 @@ function ProfilePage() {
 
   const save = async () => {
     if (!user) return;
-    const fn = fullName.trim();
+    const fn = firstName.trim();
     const mn = noMiddleName ? "" : middleName.trim();
+    const ln = lastName.trim();
     const id = idNumber.trim();
 
-    if (!fn) return toast.error("Please enter your full name.");
+    if (!fn) return toast.error("Please enter your first name.");
+    if (!ln) return toast.error("Please enter your last name.");
     if (!noMiddleName && !mn) {
       return toast.error("Enter your middle name or tick 'No middle name'.");
     }
@@ -92,15 +103,19 @@ function ProfilePage() {
       }
     }
 
+    const fullName = [fn, mn, ln].filter(Boolean).join(" ");
+
     setSaving(true);
     try {
       await setDoc(
         doc(db, "users", user.uid),
         {
-          fullName: fn,
+          firstName: fn,
           middleName: mn,
+          lastName: ln,
           noMiddleName,
-          displayName: fn,
+          fullName,
+          displayName: fullName,
           studentNumber: id,
           idNumber: id,
           idType: isEmployee ? "employee" : "student",
@@ -136,12 +151,8 @@ function ProfilePage() {
             <Input value={email} disabled />
           </div>
           <div>
-            <label className="text-xs text-muted-foreground">Full Name</label>
-            <Input
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              placeholder="Juan Dela Cruz"
-            />
+            <label className="text-xs text-muted-foreground">First Name</label>
+            <Input value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="Juan" />
           </div>
           <div>
             <div className="flex items-center justify-between">
@@ -166,6 +177,10 @@ function ProfilePage() {
               placeholder="Fernandez"
               disabled={noMiddleName}
             />
+          </div>
+          <div>
+            <label className="text-xs text-muted-foreground">Last Name</label>
+            <Input value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Dela Cruz" />
           </div>
           <div>
             <label className="text-xs text-muted-foreground">{idLabel}</label>
