@@ -132,6 +132,69 @@
   --sidebar-ring: oklch(0.551 0.027 264.364);
 }
 
+/* Accent color overrides (applied via <html data-accent="..."> ) */
+[data-accent="maroon"] {
+  --primary: oklch(0.38 0.14 25);
+  --primary-foreground: oklch(0.98 0.01 0);
+  --ring: oklch(0.38 0.14 25);
+  --sidebar-primary: oklch(0.38 0.14 25);
+  --sidebar-primary-foreground: oklch(0.98 0.01 0);
+}
+[data-accent="blue"] {
+  --primary: oklch(0.55 0.22 260);
+  --primary-foreground: oklch(0.98 0.01 0);
+  --ring: oklch(0.55 0.22 260);
+  --sidebar-primary: oklch(0.55 0.22 260);
+  --sidebar-primary-foreground: oklch(0.98 0.01 0);
+}
+[data-accent="emerald"] {
+  --primary: oklch(0.55 0.14 160);
+  --primary-foreground: oklch(0.98 0.01 0);
+  --ring: oklch(0.55 0.14 160);
+  --sidebar-primary: oklch(0.55 0.14 160);
+  --sidebar-primary-foreground: oklch(0.98 0.01 0);
+}
+[data-accent="violet"] {
+  --primary: oklch(0.58 0.22 295);
+  --primary-foreground: oklch(0.98 0.01 0);
+  --ring: oklch(0.58 0.22 295);
+  --sidebar-primary: oklch(0.58 0.22 295);
+  --sidebar-primary-foreground: oklch(0.98 0.01 0);
+}
+[data-accent="zinc"] {
+  --primary: oklch(0.32 0.01 260);
+  --primary-foreground: oklch(0.98 0.01 0);
+  --ring: oklch(0.32 0.01 260);
+  --sidebar-primary: oklch(0.32 0.01 260);
+  --sidebar-primary-foreground: oklch(0.98 0.01 0);
+}
+[data-accent="amber"] {
+  --primary: oklch(0.75 0.17 70);
+  --primary-foreground: oklch(0.2 0.02 60);
+  --ring: oklch(0.75 0.17 70);
+  --sidebar-primary: oklch(0.75 0.17 70);
+  --sidebar-primary-foreground: oklch(0.2 0.02 60);
+}
+
+/* Default to maroon so first paint uses the brand color (only when no accent chosen) */
+:root:not([data-accent]),
+[data-accent="maroon"] {
+  --primary: oklch(0.38 0.14 25);
+  --primary-foreground: oklch(0.98 0.01 0);
+  --ring: oklch(0.38 0.14 25);
+  --sidebar-primary: oklch(0.38 0.14 25);
+  --sidebar-primary-foreground: oklch(0.98 0.01 0);
+}
+
+/* Dark-mode accent tweaks (lighter primary for contrast) */
+.dark[data-accent="maroon"]  { --primary: oklch(0.55 0.16 25);  --ring: oklch(0.55 0.16 25);  --sidebar-primary: oklch(0.55 0.16 25); }
+.dark[data-accent="blue"]    { --primary: oklch(0.65 0.20 260); --ring: oklch(0.65 0.20 260); --sidebar-primary: oklch(0.65 0.20 260); }
+.dark[data-accent="emerald"] { --primary: oklch(0.68 0.15 160); --ring: oklch(0.68 0.15 160); --sidebar-primary: oklch(0.68 0.15 160); }
+.dark[data-accent="violet"]  { --primary: oklch(0.68 0.20 295); --ring: oklch(0.68 0.20 295); --sidebar-primary: oklch(0.68 0.20 295); }
+.dark[data-accent="zinc"]    { --primary: oklch(0.75 0.01 260); --primary-foreground: oklch(0.2 0.01 260); --ring: oklch(0.75 0.01 260); --sidebar-primary: oklch(0.75 0.01 260); --sidebar-primary-foreground: oklch(0.2 0.01 260); }
+.dark[data-accent="amber"]   { --primary: oklch(0.80 0.17 70);  --ring: oklch(0.80 0.17 70);  --sidebar-primary: oklch(0.80 0.17 70); }
+
+
 @layer base {
   * {
     border-color: var(--color-border);
@@ -142,3 +205,4 @@
     color: var(--color-foreground);
   }
 }
+
