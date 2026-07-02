@@ -165,8 +165,8 @@ async function main() {
 
   // 1. Build
   run(process.platform === "win32" ? "npx.cmd" : "npx", ["vite", "build"]);
-  const clientDir = path.join(__dirname, "dist", "client");
-  const serverEntry = path.join(__dirname, "dist", "server", "index.mjs");
+  const clientDir = path.join(__dirname, ".output", "public");
+  const serverEntry = path.join(__dirname, ".output", "server", "index.mjs");
   if (!existsSync(clientDir)) throw new Error(`Missing build output: ${clientDir}`);
   if (!existsSync(serverEntry)) throw new Error(`Missing SSR entry: ${serverEntry}`);
 
