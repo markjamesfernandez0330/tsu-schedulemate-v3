@@ -52,7 +52,8 @@ function ReceiptPage() {
         <div className="bg-white rounded-xl shadow-sm border p-8 print:shadow-none print:border-none">
           <div className="text-center border-b pb-4 mb-4">
             {data.photoUrl ? (
-              <img src={data.photoUrl} alt="" className="mx-auto h-16 w-16 rounded-full object-cover border" />
+              // <img src={data.photoUrl} alt="" className="mx-auto h-16 w-16 rounded-full object-cover border" />
+                 <img src="/tsu-logo.png" alt="TSU" className="mx-auto h-16 w-16 rounded-full object-cover border" />
             ) : (
               <div className="mx-auto h-16 w-16 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center text-lg">
                 {(data.fullName || data.userName || data.userEmail || "?").charAt(0).toUpperCase()}
