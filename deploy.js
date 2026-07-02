@@ -159,7 +159,7 @@ async function main() {
 
   // 1. Build (use npx so it works whether the user has bun or only node installed)
   run(process.platform === "win32" ? "npx.cmd" : "npx", ["vite", "build"]);
-  const clientDir = path.join(__dirname, "dist", "client");
+  const clientDir = path.join(__dirname, ".output", "public");
   if (!existsSync(clientDir)) {
     throw new Error(`Expected build output at ${clientDir}`);
   }
