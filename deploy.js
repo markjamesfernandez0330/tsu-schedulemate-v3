@@ -157,8 +157,8 @@ async function main() {
 
   log(`Publishing to: ${outDir}`);
 
-  // 1. Build
-  run(process.platform === "win32" ? "bun.cmd" : "bun", ["run", "build"]);
+  // 1. Build (use npx so it works whether the user has bun or only node installed)
+  run(process.platform === "win32" ? "npx.cmd" : "npx", ["vite", "build"]);
   const clientDir = path.join(__dirname, "dist", "client");
   if (!existsSync(clientDir)) {
     throw new Error(`Expected build output at ${clientDir}`);
